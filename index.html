@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kick.com Multi-Stream Viewer</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <h1>Kick Multi Viewer</h1>
+    <label class="switch">
+        <input type="checkbox" id="toggleMoveResize">
+        <span class="slider"></span>
+    </label>
+    <span id="modeLabel">Move/Resize Mode: Off</span>
+    <div id="teamLegend">
+        <h2>Teams <span class="toggle-button">-</span></h2>
+    </div>
+    <div id="addStreamForm">
+        <input type="text" id="streamUrl" placeholder="Enter Kick.com stream username">
+        <button id="addStreamButton">Add Stream</button>
+    </div>
+    <div id="streamContainer"></div>
+    <div id="streamMenu">
+        <h2>Players <span class="toggle-button">-</span></h2>
+    </div>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>
