@@ -29,53 +29,124 @@ const colors = ['#ff4136', '#0074d9', '#2ecc40', '#ffdc00', '#b10dc9', '#ff851b'
         document.getElementById('toggleMoveResize').addEventListener('change', toggleMoveResize);
 
         function addStream(username) {
-            if (!username) return;
-            if (streams.has(username)) return;
+    if (!username) return;
+    if (streams.has(username)) return;
 
-            const streamContainer = document.getElementById('streamContainer');
-            const streamFrame = document.createElement('div');
-            streamFrame.classList.add('streamFrame', 'no-team');
-            streamFrame.style.top = '0px';
-            streamFrame.style.left = '0px';
-            streamFrame.style.zIndex = zIndex++;
+    const streamContainer = document.getElementById('streamContainer');
+    const streamFrame = document.createElement('div');
+    streamFrame.classList.add('streamFrame', 'no-team');
+    streamFrame.style.top = '0px';
+    streamFrame.style.left = '0px';
+    streamFrame.style.zIndex = zIndex++;
 
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://player.kick.com/${username}?autoplay=true&muted=false`;
-            streamFrame.appendChild(iframe);
+    // Create a wrapper for both video and chat
+    const videoChatWrapper = document.createElement('div');
+    videoChatWrapper.style.position = 'relative';
+    videoChatWrapper.style.width = '100%';
+    videoChatWrapper.style.height = '100%';
 
-            const colorPickerIcon = document.createElement('div');
-            colorPickerIcon.classList.add('colorPickerIcon');
-            colorPickerIcon.addEventListener('click', (event) => {
-                event.stopPropagation();
-                showColorOptions(streamFrame, username);
-            });
-            streamFrame.appendChild(colorPickerIcon);
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://player.kick.com/${username}?autoplay=true&muted=false`;
+    iframe.allow = "fullscreen";
+    iframe.allowFullscreen = true;
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
 
-            const closeButton = document.createElement('div');
-            closeButton.classList.add('closeButton');
-            closeButton.innerHTML = '&times;';
-            closeButton.addEventListener('click', () => {
-                removeStream(username);
-            });
-            streamFrame.appendChild(closeButton);
+    // Append video iframe to the wrapper
+    videoChatWrapper.appendChild(iframe);
 
-            ['top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach(position => {
-                const resizer = document.createElement('div');
-                resizer.classList.add('resizer', position);
-                resizer.addEventListener('mousedown', initResize);
-                streamFrame.appendChild(resizer);
-            });
+    const chatIframe = document.createElement('iframe');
+    chatIframe.src = `https://zxvc23.github.io/chat/?user=${username}&animate=true&badges=true&commands=true&bots=true&textsize=10px`;
+    chatIframe.style.position = 'absolute';
+    chatIframe.style.bottom = '0';
+    chatIframe.style.left = '0';
+    chatIframe.style.width = '35%';  // Adjust width as needed for fullscreen view
+    chatIframe.style.height = '35%'; // Adjust height as needed for fullscreen view
+    chatIframe.style.border = 'none';
+    chatIframe.style.filter = 'drop-shadow(2px 2px 2px rgba(0, 0, 0, 1))';
+    chatIframe.style.overflow = 'hidden'; // Ensure no scrolling
+    chatIframe.style.display = 'block'; // Default to visible
 
-            streamContainer.appendChild(streamFrame);
+    // Append chat iframe to the wrapper
+    videoChatWrapper.appendChild(chatIframe);
 
-            addStreamToMenu(username);
-            streams.set(username, null);
+    // Append wrapper to the stream frame
+    streamFrame.appendChild(videoChatWrapper);
 
-            makeDraggable(streamFrame);
-            updateTeamLegend();
+    const colorPickerIcon = document.createElement('div');
+    colorPickerIcon.classList.add('colorPickerIcon');
+    colorPickerIcon.addEventListener('click', (event) => {
+        event.stopPropagation();
+        showColorOptions(streamFrame, username);
+    });
+    streamFrame.appendChild(colorPickerIcon);
 
-            toggleMoveResize();
+    // Add a button to toggle chat visibility
+    const chatToggleButton = document.createElement('div');
+    chatToggleButton.classList.add('chatToggleButton');
+    chatToggleButton.innerHTML = 'Chat'; // Button label
+    chatToggleButton.addEventListener('click', () => {
+        if (chatIframe.style.visibility === 'hidden') {
+            chatIframe.style.visibility = 'visible'; // Show chat without reflow
+            chatToggleButton.style.opacity = '1'; // Ensure button is visible
+        } else {
+            chatIframe.style.visibility = 'hidden'; // Hide chat without affecting layout
+            chatToggleButton.style.opacity = '0.5'; // Change opacity to indicate hidden state
         }
+    });
+    streamFrame.appendChild(chatToggleButton);
+
+    const closeButton = document.createElement('div');
+    closeButton.classList.add('closeButton');
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', () => {
+        removeStream(username);
+    });
+    streamFrame.appendChild(closeButton);
+
+    ['top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach(position => {
+        const resizer = document.createElement('div');
+        resizer.classList.add('resizer', position);
+        resizer.addEventListener('mousedown', initResize);
+        streamFrame.appendChild(resizer);
+    });
+
+    streamContainer.appendChild(streamFrame);
+
+    addStreamToMenu(username);
+    streams.set(username, null);
+
+    makeDraggable(streamFrame);
+    updateTeamLegend();
+
+    toggleMoveResize();
+
+    // Full-screen functionality for videoChatWrapper
+    videoChatWrapper.addEventListener('dblclick', () => {
+        if (!document.fullscreenElement) {
+            if (videoChatWrapper.requestFullscreen) {
+                videoChatWrapper.requestFullscreen();
+            } else if (videoChatWrapper.mozRequestFullScreen) { // Firefox
+                videoChatWrapper.mozRequestFullScreen();
+            } else if (videoChatWrapper.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                videoChatWrapper.webkitRequestFullscreen();
+            } else if (videoChatWrapper.msRequestFullscreen) { // IE/Edge
+                videoChatWrapper.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+        }
+    });
+}
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('addStreamButton').addEventListener('click', () => {
