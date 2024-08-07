@@ -57,7 +57,7 @@ const colors = ['#ff4136', '#0074d9', '#2ecc40', '#ffdc00', '#b10dc9', '#ff851b'
     videoChatWrapper.appendChild(iframe);
 
     const chatIframe = document.createElement('iframe');
-    chatIframe.src = `https://zxvc23.github.io/chat/?user=${username}&animate=true&badges=true&commands=true&bots=true&textsize=10px`;
+    chatIframe.src = `https://zxvc23.github.io/chat/?user=${username}&animate=true&badges=true&commands=true&bots=true&textsize=15px`;
     chatIframe.style.position = 'absolute';
     chatIframe.style.bottom = '0';
     chatIframe.style.left = '0';
