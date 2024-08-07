@@ -285,7 +285,29 @@
         .streamFrame.team-assigned {
             border: 2px solid var(--primary-color);
         }
+        .chatToggleButton {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 30px;
+    width: 50px;
+    height: 20px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    text-align: center;
+    line-height: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    z-index: 10;
+}
 
+        .chatToggleButton {
+        right: 60px; /* Positioned next to color picker */
+}
+        .streamFrame:hover .chatToggleButton {
+        display: block;
+}
         .switch {
             position: fixed;
             top: 10px;
